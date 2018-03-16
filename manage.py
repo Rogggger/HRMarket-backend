@@ -7,7 +7,7 @@ app = create_app(config)
 manager = Manager(app)
 
 
-@manager.command
+@manager.
 def createdb():
     with app.app_context():
         db.drop_all()
