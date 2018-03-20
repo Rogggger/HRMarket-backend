@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     password = Column(String(200), nullable=False)
+    isAdmin = Column(Integer, nullable=False)
     salt = Column(String(50))
 
     @classmethod

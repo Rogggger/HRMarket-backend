@@ -17,6 +17,13 @@ class Info(db.Model):
     phone = Column(String(55), nullable=False)  # 联系电话
     fax = Column(String(55), nullable=False)  # 传真
     email = Column(String(50), nullable=True)  # email
-    user_id = Column(Integer,nullable=False)
+    user_id = Column(Integer, nullable=False)
 
+    @classmethod
+    def is_exist(cls,user_id):
+        res = cls.query.filter_by(user_id=user_id).all()
+        if res:
+            return True
+        else:
+            return False
 
