@@ -1,6 +1,7 @@
+# coding: utf-8
 from flask_login import login_required, current_user
 from app.model.corporateInfo import Info
-from flask import Blueprint, request, flash
+from flask import Blueprint, request
 from marshmallow import Schema, fields
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
