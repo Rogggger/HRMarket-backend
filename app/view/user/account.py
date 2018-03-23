@@ -21,7 +21,7 @@ class AccountParaSchema(Schema):
 
 
 @bp_account.route('/register', methods=['POST'])
-# @login_required
+@login_required
 def register():
     """
     注册视图，只接受POST消息，根据发来的用户名和密码
