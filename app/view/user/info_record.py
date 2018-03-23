@@ -14,18 +14,20 @@ bp_info = Blueprint("info", __name__, url_prefix="/info")
 
 
 class InfoParaSchema(Schema):
+    address = fields.List(fields.String(2))  # 联系地址
+    address_detail = fields.String(55)  # 联系地址详细
     area = fields.String(50)  # 所属地区
+    belong_to = fields.List(fields.String(50))  # 所属行业
     code = fields.String(20)  # 组织机构代码
-    name = fields.String(55)  # 企业名称
-    nature = fields.String(50)  # 企业性质
-    belong_to = fields.String(50)  # 所属行业
-    main_business = fields.String(55)  # 主营业务
     contacts = fields.String(55)  # 联系人
-    address = fields.String(55)  # 联系地址
-    postal_code = fields.String(55)  # 邮政编码
-    phone = fields.String(55)  # 联系电话
-    fax = fields.String(55)  # 传真
     email = fields.String(50)  # email
+    enterprise_kind = fields.List(fields.String(10))  # 企业类型
+    enterprise_scale = fields.List(fields.String(10))  # 企业规模
+    fax = fields.String(55)  # 传真
+    main_business = fields.String(55)  # 主营业务
+    name = fields.String(55)  # 企业名称
+    phone = fields.String(55)  # 联系电话
+    postal_code = fields.String(55)  # 邮政编码
 
 
 @bp_info.route("/record", methods=['POST'])
