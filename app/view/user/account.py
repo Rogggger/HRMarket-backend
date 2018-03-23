@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from flask import Blueprint, request, flash
+from flask import Blueprint, request
 from flask_login import login_required, login_user, logout_user, current_user
 from marshmallow import Schema, fields
 from app.model.user import User
@@ -21,7 +21,7 @@ class AccountParaSchema(Schema):
 
 
 @bp_account.route('/register', methods=['POST'])
-#@login_required
+# @login_required
 def register():
     """
     注册视图，只接受POST消息，根据发来的用户名和密码
@@ -36,7 +36,7 @@ def register():
     username = data['email']
     password_md5 = data['password_md5']
     if User.is_exist(username):
-        return error_jsonify(AccountAlreadyExist, specifiy_error="Account already exist", status_code=401)
+        return error_jsonify(AccountAlreadyExist, specifiy_error="Account already exist", status_code=400)
     else:
         if current_user.isAdmin == 1:  # 1 是市级，可以创建普通
             is_admin = 0
@@ -65,15 +65,13 @@ def login():
     password_md5 = data['password_md5']
     attempt_user = User.query.filter_by(name=username).first()
     if attempt_user is None:
-        return error_jsonify(AccountDoesNotExist, specifiy_error="Account does not exist", status_code=401)
+        return error_jsonify(AccountDoesNotExist, specifiy_error="Account does not exist", status_code=400)
     else:
         if attempt_user.has_right_password(password_md5):
             login_user(attempt_user)
             return jsonify({"is_admin": attempt_user.isAdmin})
-            flash('Logged in successfully.')
-
         else:
-            return error_jsonify(PasswordIsNotCorrect, specifiy_error="password is not correct", status_code=401)
+            return error_jsonify(PasswordIsNotCorrect, specifiy_error="password is not correct", status_code=400)
 
 
 @bp_account.route('/logout', methods=['GET', 'POST'])
