@@ -2,7 +2,7 @@
 from flask_login import login_required, current_user
 from app.model.corporate_Info import Info
 from flask import Blueprint, request
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load, pre_dump
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
 from app.consts import (
@@ -28,6 +28,23 @@ class InfoParaSchema(Schema):
     name = fields.String(55)  # 企业名称
     phone = fields.String(55)  # 联系电话
     postal_code = fields.String(55)  # 邮政编码
+
+    @post_load
+    def compose(self, data):
+        address = '/'.join(data.pop('address'))
+        data['address'] = '{}/{}'.format(address, data.pop('address_detail'))
+        data['enterprise'] = "{}/{}".format(data.pop('enterprise_kind')[0], data.pop('enterprise_scale')[0])
+        data['belong_to'] = '/'.join(data['belong_to'])
+
+    @pre_dump
+    def decompose(self, obj):
+        address1, address2, detail = obj.address.split('/')
+        obj.address = [address1, address2]
+        obj.address_detail = detail
+        kind, scale = obj.enterprise.split('/')
+        obj.enterprise_kind = kind
+        obj.enterprise_scale = scale
+        obj.belong_to = obj.belong_to.split('/')
 
 
 @bp_info.route("/record", methods=['POST'])
