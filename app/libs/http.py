@@ -1,6 +1,7 @@
 from flask import Response
 import jsonpickle
 from app.libs.errorhandler import compose_error
+from app.consts.errors import ERROR_MAP
 
 
 def jsonify(raw=None, status_code=200):
@@ -10,5 +11,5 @@ def jsonify(raw=None, status_code=200):
 
 
 def error_jsonify(error_code, specifiy_error="", status_code=400):
-    error_resp = compose_error(specifiy_error, error_code)
+    error_resp = compose_error(specifiy_error if specifiy_error else ERROR_MAP[error_code], error_code)
     return jsonify(error_resp, status_code)
