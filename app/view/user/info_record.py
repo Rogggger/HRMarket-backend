@@ -1,6 +1,6 @@
 # coding: utf-8
 from flask_login import login_required, current_user
-from app.model.corporateInfo import Info
+from app.model.corporate_Info import Info
 from flask import Blueprint, request
 from marshmallow import Schema, fields
 from app.libs.http import jsonify, error_jsonify
@@ -14,7 +14,7 @@ bp_info = Blueprint("info", __name__, url_prefix="/info")
 
 
 class InfoParaSchema(Schema):
-    address = fields.List(fields.String(2))  # 联系地址
+    address = fields.List(fields.String(5))  # 联系地址
     address_detail = fields.String(55)  # 联系地址详细
     area = fields.String(50)  # 所属地区
     belong_to = fields.List(fields.String(50))  # 所属行业
