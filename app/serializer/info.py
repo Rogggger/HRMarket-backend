@@ -21,10 +21,10 @@ class InfoParaSchema(Schema):
     @post_load
     def compose(self, data):
         address = '/'.join(data.pop('address'))
-        data['address'] = '{}/{}'.format(address, data.pop('address_detail'))
-        data['enterprise'] = "{}/{}".format(
+        data['address'] = u'{}/{}'.format(address, data.pop('address_detail'))
+        data['enterprise'] = u"{}/{}".format(
             data.pop('enterprise_kind'), data.pop('enterprise_scale'))
-        data['belong_to'] = '/'.join(data['belong_to'])
+        data['belong_to'] = u'/'.join(data['belong_to'])
 
     @pre_dump
     def decompose(self, obj):
