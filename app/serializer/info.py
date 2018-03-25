@@ -10,8 +10,8 @@ class InfoParaSchema(Schema):
     code = fields.String(20)  # 组织机构代码
     contacts = fields.String(55)  # 联系人
     email = fields.String(50)  # email
-    enterprise_kind = fields.List(fields.String(10))  # 企业类型
-    enterprise_scale = fields.List(fields.String(10))  # 企业规模
+    enterprise_kind = fields.String(10)  # 企业类型
+    enterprise_scale = fields.String(10)  # 企业规模
     fax = fields.String(55)  # 传真
     main_business = fields.String(55)  # 主营业务
     name = fields.String(55)  # 企业名称
@@ -22,7 +22,8 @@ class InfoParaSchema(Schema):
     def compose(self, data):
         address = '/'.join(data.pop('address'))
         data['address'] = '{}/{}'.format(address, data.pop('address_detail'))
-        data['enterprise'] = "{}/{}".format(data.pop('enterprise_kind')[0], data.pop('enterprise_scale')[0])
+        data['enterprise'] = "{}/{}".format(
+            data.pop('enterprise_kind'), data.pop('enterprise_scale'))
         data['belong_to'] = '/'.join(data['belong_to'])
 
     @pre_dump
