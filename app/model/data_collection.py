@@ -1,3 +1,4 @@
+# coding: utf-8
 from sqlalchemy import Column, Integer, String, Sequence,TIMESTAMP
 from app.libs.db import db
 
