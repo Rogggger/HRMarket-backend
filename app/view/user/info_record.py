@@ -3,7 +3,7 @@ from flask import Blueprint, request
 
 from flask_login import login_required, current_user
 
-from app.model.corporate_Info import Info
+from app.model.corporateInfo import Info
 from app.serializer.info import InfoParaSchema
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
@@ -12,6 +12,7 @@ from app.consts import (
     GetInfoError
 )
 
+# 企业本身数据填报
 bp_info = Blueprint("info", __name__, url_prefix="/info")
 
 

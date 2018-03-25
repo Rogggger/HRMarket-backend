@@ -39,7 +39,7 @@ def register():
         return error_jsonify(AccountAlreadyExist, status_code=400)
     else:
         if current_user.isAdmin == 1:  # 1 是市级，可以创建普通
-            is_admin = 0
+            is_admin = 0  # 0为普通企业用户
         elif current_user.isAdmin == 2:  # 2 省级，可以创建市级
             is_admin = 1
 
