@@ -1,3 +1,4 @@
+#  coding: utf-8
 from flask_login import login_required, current_user
 from app.model.data_collection import DataCollection
 from flask import Blueprint, request
@@ -35,7 +36,7 @@ def info_record():
     data, errors = DataParaSchema().load(json)
 
     if errors:
-        return error_jsonify(InvalidArguments, errors, 400)
+        return error_jsonify(10000001, errors)
     else:
         now = datetime.datetime.now()
         now = now.strftime("%Y-%m-%d %H:%M:%S")
