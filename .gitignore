@@ -3,3 +3,4 @@
 /venv
 daemonrun.sh
 config.py
+*.pyc
