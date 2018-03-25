@@ -22,7 +22,8 @@ class InfoParaSchema(Schema):
     def compose(self, data):
         address = '/'.join(data.pop('address'))
         data['address'] = '{}/{}'.format(address, data.pop('address_detail'))
-        data['enterprise'] = "{}/{}".format(data.pop('enterprise_kind'), data.pop('enterprise_scale'))
+        data['enterprise'] = "{}/{}".format(
+            data.pop('enterprise_kind'), data.pop('enterprise_scale'))
         data['belong_to'] = '/'.join(data['belong_to'])
 
     @pre_dump
