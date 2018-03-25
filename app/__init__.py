@@ -7,6 +7,7 @@ from app.view.user.sync import bp_sync
 from app.view.user.info_record import bp_info
 from app.view.user.data_record import bp_data
 
+
 def create_app(object_name):
     app = Flask(__name__)
     app.config.from_object(object_name)
@@ -16,7 +17,6 @@ def create_app(object_name):
     app.register_blueprint(bp_sync)
     app.register_blueprint(bp_info)
     app.register_blueprint(bp_data)
-
 
     login_manager.init_app(app)
     db.init_app(app)

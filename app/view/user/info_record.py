@@ -26,9 +26,13 @@ def info_record():
         return error_jsonify(InvalidArguments, errors, 400)
     else:
         data['user_id'] = current_user.id
-        new_info = Info(**data)
-        session.add(new_info)
-        session.commit()
+        tmp_info = Info.query.filter_by(user_id=current_user).first()
+        if tmp_info:
+            tmp_info.update(**data)
+        else:
+            new_info = Info(**data)
+            session.add(new_info)
+            session.commit()
         return jsonify({})
 
 
