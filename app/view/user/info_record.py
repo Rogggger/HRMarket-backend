@@ -26,7 +26,7 @@ def info_record():
         return error_jsonify(InvalidArguments, errors, 400)
     else:
         data['user_id'] = current_user.id
-        tmp_info = Info.query.filter_by(user_id=current_user).first()
+        tmp_info = Info.query.filter_by(user_id=current_user.id).first()
         if tmp_info:
             tmp_info.update(**data)
         else:
