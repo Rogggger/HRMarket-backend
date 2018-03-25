@@ -36,7 +36,7 @@ def register():
     username = data['email']
     password_md5 = data['password_md5']
     if User.is_exist(username):
-        return error_jsonify(AccountAlreadyExist, specifiy_error="Account already exist", status_code=400)
+        return error_jsonify(AccountAlreadyExist, status_code=400)
     else:
         if current_user.isAdmin == 1:  # 1 是市级，可以创建普通
             is_admin = 0
@@ -65,13 +65,13 @@ def login():
     password_md5 = data['password_md5']
     attempt_user = User.query.filter_by(name=username).first()
     if attempt_user is None:
-        return error_jsonify(AccountDoesNotExist, specifiy_error="Account does not exist", status_code=400)
+        return error_jsonify(AccountDoesNotExist, status_code=400)
     else:
         if attempt_user.has_right_password(password_md5):
             login_user(attempt_user)
             return jsonify({"is_admin": attempt_user.isAdmin})
         else:
-            return error_jsonify(PasswordIsNotCorrect, specifiy_error="password is not correct", status_code=400)
+            return error_jsonify(PasswordIsNotCorrect, status_code=400)
 
 
 @bp_account.route('/logout', methods=['GET', 'POST'])

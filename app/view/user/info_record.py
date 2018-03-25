@@ -40,4 +40,4 @@ def info_get():
         json, error = InfoParaSchema().dump(tmp_info)
         return jsonify(json)
     else:
-        return error_jsonify(GetInfoError, specifiy_error="Can not get the info", status_code=400)
+        return error_jsonify(GetInfoError, status_code=400)
