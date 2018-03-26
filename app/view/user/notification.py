@@ -1,13 +1,11 @@
 # coding: utf-8
-from flask import Blueprint, request
+from flask import Blueprint
 from app.model.notice import Notice
 from app.model.user import User
 from flask_login import login_required, current_user
 from app.serializer.notice import NoticeParaSchema
 from app.libs.http import jsonify, error_jsonify
-from app.libs.db import session
 from app.consts import (
-    InvalidArguments,
     GetInfoError
 )
 
