@@ -13,3 +13,4 @@ class DataParaSchema(Schema):
     second_reason_detail = fields.String(100)  # 次要原因说明
     third_reason = fields.String(50)  # 第三原因
     third_reason_detail = fields.String(100)  # 第三原因
+    status = fields.Integer()  # 状态
