@@ -15,7 +15,7 @@ class DataCollection(db.Model):
     second_reason_detail = Column(String(100), nullable=True)  # 次要原因说明
     third_reason = Column(String(50), nullable=True)  # 第三原因
     third_reason_detail = Column(String(100), nullable=True)  # 第三原因
-    time = Column(TIMESTAMP, nullable=False, default='1980-00-00 00:00:00')  # 填报时间
+    time = Column(TIMESTAMP, nullable=False, default='1980-01-01 00:00:00')  # 填报时间
     time_id = Column(Integer, nullable=False)  # 填报时间id
     status = Column(Integer, nullable=False)  # 状态，0为保存未上报，1为上报未审核，2为通过审核，3为审核不通过
     user_id = Column(Integer, nullable=False)  # 用户id
