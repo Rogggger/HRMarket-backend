@@ -1,32 +1,25 @@
 #  coding: utf-8
+import datetime
+
 from flask_login import login_required, current_user
-from app.model.data_collection import DataCollection
+from sqlalchemy import and_
 from flask import Blueprint, request
 from marshmallow import Schema, fields
+
+from app.model.data_collection import DataCollection
+from app.model.report_time import ReportTime
+from app.model.user import User
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
-import datetime
-from app.consts import (
-    InvalidArguments,
-    GetInfoError
-)
+from app.serializer.data import DataParaSchema
 
 # 企业数据填报
-
 bp_data = Blueprint("data", __name__, url_prefix="/data")
 
 
-class DataParaSchema(Schema):
-    filing = fields.Integer(10)  # 初次建档时就业人数
-    check = fields.Integer(10)  # 本次调查期就业人数
-    other_reason = fields.String(55)  # 其他原因
-    decrease_type = fields.String(50)  # 就业人数减少类型
-    main_reason = fields.String(50)  # 主要原因
-    main_reason_detail = fields.String(100)  # 主要原因说明
-    second_reason = fields.String(50)  # 次要原因
-    second_reason_detail = fields.String(100)  # 次要原因说明
-    third_reason = fields.String(50)  # 第三原因
-    third_reason_detail = fields.String(100)  # 第三原因
+class DataGetParaSchema(Schema):
+    start = fields.DateTime()  # 结束时间
+    end = fields.DateTime()  # 开始时间
 
 
 @bp_data.route("/record", methods=['POST'])
@@ -37,25 +30,91 @@ def info_record():
 
     if errors:
         return error_jsonify(10000001, errors)
-    else:
-        now = datetime.datetime.now()
-        now = now.strftime("%Y-%m-%d %H:%M:%S")
-        data['time'] = now
-        data['status'] = 0
-        data['user_id'] = current_user.id
-        new_data = DataCollection(**data)
-        session.add(new_data)
-        session.commit()
-        return jsonify({})
+    now = datetime.datetime.now()
+    data['time'] = now
+    admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
+    report_time = ReportTime.query.filter(and_(ReportTime.user_id == admin_user.id, ReportTime.start_time <= now,
+                                               ReportTime.end_time >= now)).first()
+    # 找到省级管理员设置的提交时间中符合条件的
+    if report_time:  # 如果在当前时间段
+        tmp_data = DataCollection.query.filter_by(user_id=current_user.id, time_id=report_time.id)
+        # 找到企业填报的符合条件的数据
+        if tmp_data.first():  # 修改企业条目，并保存
+            if tmp_data.first().status != 0:
+                return error_jsonify(10000016)
+            tmp_data.update(data)
+            session.commit()
+        else:  # 新建一个企业填报条目，并保存
+            data['time_id'] = report_time.id
+            data['status'] = 0
+            data['user_id'] = current_user.id
+            new_data = DataCollection(**data)
+            session.add(new_data)
+            session.commit()
+    else:  # 现在不在任何可以填报的时间段内
+        return error_jsonify(10000014)
+    return jsonify({})
 
 
 @bp_data.route("/record", methods=['GET'])
 @login_required
-def info_get():
-    cur_id = current_user.id
-    if DataCollection.is_exist(cur_id):
-        tmp_data = DataCollection.query.filter_by(user_id=cur_id).first()
-        json, error = DataParaSchema().dump(tmp_data)
-        return jsonify(json)
+def info_record_get():
+    now = datetime.datetime.now()
+    admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
+    report_time = ReportTime.query.filter(and_(ReportTime.user_id == admin_user.id, ReportTime.start_time <= now,
+                                               ReportTime.end_time >= now)).first()
+    if report_time:
+        tmp_data = DataCollection.query.filter_by(user_id=current_user.id, time_id=report_time.id).first()
+        # 找到企业填报的符合条件的数据
+        if tmp_data:
+            data_need, errors = DataParaSchema().dump(tmp_data)
+            return jsonify(data_need)
     else:
-        return error_jsonify(GetInfoError, specifiy_error="Can not get the info", status_code=400)
+        return jsonify({})
+
+
+@bp_data.route("/report", methods=['POST'])
+@login_required
+def info_report():
+    json = request.get_json()
+    data, errors = DataParaSchema().load(json)
+
+    if errors:
+        return error_jsonify(10000001, errors)
+    now = datetime.datetime.now()
+    data['time'] = now
+    admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
+    report_time = ReportTime.query.filter(and_(ReportTime.user_id == admin_user.id, ReportTime.start_time <= now,
+                                               ReportTime.end_time >= now)).first()
+    # 找到省级管理员设置的提交时间中符合条件的
+    if report_time:  # 如果在当前时间段
+        tmp_data = DataCollection.query.filter_by(user_id=current_user.id, time_id=report_time.id)
+        # 找到企业填报的符合条件的数据
+        if tmp_data:  # 上报
+            if tmp_data.first().status != 0:
+                return error_jsonify(10000016)
+            data['status'] = 1
+            tmp_data.update(data)
+            session.commit()
+        else:  # 没有找到说明没有保存
+            return error_jsonify(10000015)
+    else:  # 现在不在任何可以填报的时间段内
+        return error_jsonify(10000014)
+    return jsonify({})
+
+
+@bp_data.route("/get", methods=['GET', 'POST'])
+@login_required
+def info_get():
+    json = request.get_json()
+    data, errors = DataGetParaSchema().load(json)
+    if errors:
+        return error_jsonify(10000001)
+
+    tmp_data = DataCollection.query.filter_by(user_id=current_user.id).all()
+    res = []
+    for i in tmp_data:
+        if data['start'] <= i.time <= data['end']:
+            data_need, errors = DataParaSchema().dump(i)
+            res.append(data_need)
+    return jsonify(res)
