@@ -56,7 +56,7 @@ def info_record():
     return jsonify({})
 
 
-@bp_data.route("/record", methods=['GET'])
+@bp_data.route("/get", methods=['GET'])
 @login_required
 def info_record_get():
     now = datetime.datetime.now()
@@ -103,18 +103,18 @@ def info_report():
     return jsonify({})
 
 
-@bp_data.route("/get", methods=['GET', 'POST'])
+@bp_data.route("/record", methods=['GET'])
 @login_required
 def info_get():
-    json = request.get_json()
-    data, errors = DataGetParaSchema().load(json)
+    args = request.args
+    data, errors = DataGetParaSchema().load(args)
     if errors:
         return error_jsonify(10000001)
 
-    tmp_data = DataCollection.query.filter_by(user_id=current_user.id).all()
-    res = []
-    for i in tmp_data:
-        if data['start'] <= i.time <= data['end']:
-            data_need, errors = DataParaSchema().dump(i)
-            res.append(data_need)
-    return jsonify(res)
+    res = DataCollection.query.filter(
+        and_(DataCollection.user_id == current_user.id, DataCollection.time >= data['start'],
+             DataCollection.time <= data['end'])).all()
+    data_need, errors = DataParaSchema(many=True).dump(res)
+    if errors:
+        return error_jsonify(10000001)
+    return jsonify(data_need)
