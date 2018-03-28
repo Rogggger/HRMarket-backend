@@ -18,6 +18,7 @@ bp_account = Blueprint('account', __name__, url_prefix='/account')
 class AccountParaSchema(Schema):
     email = fields.String(required=True)
     password_md5 = fields.String(required=True, validate=lambda x: len(x) >= 6)
+    is_admin = fields.Integer()
 
 
 @bp_account.route('/register', methods=['POST'])
@@ -33,15 +34,15 @@ def register():
     if errors:
         return error_jsonify(InvalidArguments, errors, 400)
 
+    if current_user.isAdmin != 2:
+        return error_jsonify(10000003)
+
     username = data['email']
     password_md5 = data['password_md5']
+    is_admin = data['is_admin']
+
     if User.is_exist(username):
         return error_jsonify(AccountAlreadyExist, status_code=400)
-    else:
-        if current_user.isAdmin == 1:  # 1 是市级，可以创建普通
-            is_admin = 0  # 0为普通企业用户
-        elif current_user.isAdmin == 2:  # 2 省级，可以创建市级
-            is_admin = 1
 
     new_user = User(name=username, password=password_md5, isAdmin=is_admin)
     session.add(new_user)
