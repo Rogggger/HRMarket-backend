@@ -34,6 +34,9 @@ def register():
     if errors:
         return error_jsonify(InvalidArguments, errors, 400)
 
+    if current_user.isAdmin != 2:
+        return error_jsonify(10000003)
+
     username = data['email']
     password_md5 = data['password_md5']
     is_admin = data['is_admin']
