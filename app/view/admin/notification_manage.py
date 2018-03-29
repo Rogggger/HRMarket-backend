@@ -2,21 +2,18 @@
 import datetime
 
 from flask_login import login_required, current_user
-from sqlalchemy import and_
-from flask import Blueprint, request
-from marshmallow import Schema, fields
 
-from app.model.data_collection import DataCollection
-from app.model.report_time import ReportTime
-from app.model.user import User
+from flask import Blueprint, request
+
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
 from app.serializer.notice import NoticeParaSchema
-from app.view import bp_admin
 from app.model.notice import Notice
 
+bp_admin_notification = Blueprint('admin_notification', __name__, url_prefix='/admin/notification')
 
-@bp_admin.route("/notification", methods=["POST"])
+
+@bp_admin_notification.route("/", methods=["POST"])
 @login_required
 def notification_manage():  # 管理员设定通知
 
@@ -34,7 +31,7 @@ def notification_manage():  # 管理员设定通知
     return jsonify({})
 
 
-@bp_admin.route("/notification", methods=["GET"])
+@bp_admin_notification.route("/", methods=["GET"])
 @login_required
 def notification_get():  # 管理员获得他设定的通知
 
@@ -45,7 +42,7 @@ def notification_get():  # 管理员获得他设定的通知
     return jsonify(data_need)
 
 
-@bp_admin.route("/<int:id>/notification", methods=["POST"])
+@bp_admin_notification.route("/<int:id>", methods=["POST"])
 @login_required
 def notice_manage_id(id):  # 更改管理员获得的通知
     json = request.get_json()
@@ -62,7 +59,7 @@ def notice_manage_id(id):  # 更改管理员获得的通知
     return jsonify({})
 
 
-@bp_admin.route("/<int:id>/notification", methods=["DELETE"])
+@bp_admin_notification.route("/<int:id>", methods=["DELETE"])
 @login_required
 def notice_manage_delete(id):  # 删除id对应的通知
 
