@@ -50,7 +50,7 @@ def time_manage_id(id):  # 省级管理员更改上交开始时间，结束时�
     json = request.get_json()
     data, errors = TimeParaSchema().load(json)
     if errors:
-        return error_jsonify(10000001)
+        return error_jsonify(10000001, errors)
 
     if current_user.isAdmin != 2:  # 只能省级管理员
         return error_jsonify(10000003)
