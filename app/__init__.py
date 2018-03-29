@@ -6,7 +6,8 @@ from app.view.user.account import bp_account
 from app.view.user.info_record import bp_info
 from app.view.user.data_record import bp_data
 from app.view.user.notification import bp_notification
-from app.view import bp_admin
+from app.view.admin.notification_manage import bp_admin_notification
+from app.view.admin.time_manage import bp_admin_time
 
 
 def create_app(object_name):
@@ -18,7 +19,8 @@ def create_app(object_name):
     app.register_blueprint(bp_info)
     app.register_blueprint(bp_data)
     app.register_blueprint(bp_notification)
-    app.register_blueprint(bp_admin)
+    app.register_blueprint(bp_admin_notification)
+    app.register_blueprint(bp_admin_time)
 
     login_manager.init_app(app)
     db.init_app(app)
