@@ -17,5 +17,4 @@ def notification_get():
         User.isAdmin >= current_user.isAdmin).with_entities(User.id)
     notice_list = Notice.query.filter(Notice.user_id.in_(user_id_list)).all()
     notice_json, errors = NoticeParaSchema(many=True).dump(notice_list)
-    res = {'notification': notice_json, 'length': len(notice_json)}
-    return jsonify(res)
+    return jsonify(notice_json)
