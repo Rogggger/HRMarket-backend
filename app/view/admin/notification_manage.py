@@ -35,11 +35,11 @@ def notification_manage():  # 管理员设定通知
 
 @bp_admin_notification.route("/", methods=["GET"])
 @login_required
-def notification_get():  # 管理员获得他设定的通知
+def notification_get():  # 管理员获得通知
     if current_user.isAdmin == 0:  # 只能为管理员
         return error_jsonify(10000003)
 
-    res = Notice.query.filter_by(user_id=current_user.id).all()
+    res = Notice.query.all()  # 获得所有通知
     data_need, errors = NoticeParaSchema(many=True).dump(res)
     if errors:
         return error_jsonify(10000001, errors)
@@ -58,8 +58,9 @@ def notice_manage_id(id):  # 更改管理员获得的通知
         return error_jsonify(10000001, errors)
 
     data_need = Notice.query.filter_by(id=id)
-    if data_need.first() is None:
-        return error_jsonify(10000001)
+
+    if data_need.first() is None:  # 没有这个id，更改失败
+        return error_jsonify(10000018)
 
     data_need.update(data)
     session.commit()
@@ -75,7 +76,7 @@ def notice_manage_delete(id):  # 删除id对应的通知
 
     data_need = Notice.query.filter_by(id=id).first()
     if data_need is None:
-        return error_jsonify(10000001)
+        return error_jsonify(10000017)
 
     session.delete(data_need)
     session.commit()
