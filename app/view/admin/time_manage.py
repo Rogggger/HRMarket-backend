@@ -57,7 +57,7 @@ def time_manage_id(id):  # 省级管理员更改上交开始时间，结束时�
 
     data_need = ReportTime.query.filter_by(id=id)
     if data_need.first() is None:
-        return error_jsonify(10000001)
+        return error_jsonify(10000018)
     data_need.update(data)
     session.commit()
     return jsonify({})
@@ -72,7 +72,7 @@ def time_manage_delete(id):  # 省级管理员删除时间段
 
     data_need = ReportTime.query.filter_by(id=id).first()
     if data_need is None:
-        return error_jsonify(10000001)
+        return error_jsonify(10000017)
     session.delete(data_need)
     session.commit()
     return jsonify({})
