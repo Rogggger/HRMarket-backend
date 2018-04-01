@@ -7,7 +7,7 @@ class DataCollection(db.Model):
     id = Column(Integer, Sequence('data_id'), primary_key=True, autoincrement=True)
     filing = Column(Integer, nullable=False)  # 初次建档时就业人数
     check = Column(Integer, nullable=False)  # 本次调查期就业人数
-    other_reason = Column(String(55), nullable=False)  # 其他原因
+    other_reason = Column(String(55), nullable=True)  # 其他原因
     decrease_type = Column(String(50), nullable=True)  # 就业人数减少类型
     main_reason = Column(String(50), nullable=True)  # 主要原因
     main_reason_detail = Column(String(100), nullable=True)  # 主要原因说明
