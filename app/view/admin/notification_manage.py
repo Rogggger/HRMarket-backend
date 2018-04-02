@@ -38,8 +38,11 @@ def notification_manage():  # 管理员设定通知
 def notification_get():  # 管理员获得通知
     if current_user.isAdmin == 0:  # 只能为管理员
         return error_jsonify(10000003)
+    if current_user.isAdmin == 2:  # 如果是省级管理员
+        res = Notice.query.all()  # 获得所有通知
+    if current_user.isAdmin == 1:  # 市级管理员
+        res = Notice.query.filter_by(user_id=current_user.id).all()
 
-    res = Notice.query.all()  # 获得所有通知
     data_need, errors = NoticeParaSchema(many=True).dump(res)
     if errors:
         return error_jsonify(10000001, errors)

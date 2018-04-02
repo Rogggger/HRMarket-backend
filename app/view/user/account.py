@@ -71,7 +71,9 @@ def login():
     else:
         if attempt_user.has_right_password(password_md5):
             login_user(attempt_user)
-            return jsonify({"is_admin": attempt_user.isAdmin})
+            return jsonify({"is_admin": attempt_user.isAdmin,
+                            "area": attempt_user.area
+                            })
         else:
             return error_jsonify(PasswordIsNotCorrect, status_code=400)
 
