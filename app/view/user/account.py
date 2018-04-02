@@ -59,7 +59,7 @@ def login():
     :return: HTTP状态码和json信息
     """
     json = request.get_json()
-    data, errors = AccountParaSchema().load(json)
+    data, errors = AccountParaSchema(exclude=('is_admin', 'area')).load(json)
     if errors:
         return error_jsonify(InvalidArguments, errors, 400)
 
