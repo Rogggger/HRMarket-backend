@@ -3,9 +3,8 @@ from marshmallow import Schema, fields, post_load, pre_dump
 
 
 class InfoParaSchema(Schema):
-    address = fields.List(fields.String(5))  # 联系地址
+    area = fields.List(fields.String(5))  # 所属地区
     address_detail = fields.String(55)  # 联系地址详细
-    area = fields.String(50)  # 所属地区
     belong_to = fields.List(fields.String(50))  # 所属行业
     code = fields.String(20)  # 组织机构代码
     contacts = fields.String(55)  # 联系人
@@ -20,17 +19,16 @@ class InfoParaSchema(Schema):
 
     @post_load
     def compose(self, data):
-        address = '/'.join(data.pop('address'))
-        data['address'] = u'{}/{}'.format(address, data.pop('address_detail'))
+        data['area'] = '/'.join(data['area'])
+        data['address'] = data.pop('address_detail')
         data['enterprise'] = u"{}/{}".format(
             data.pop('enterprise_kind'), data.pop('enterprise_scale'))
         data['belong_to'] = u'/'.join(data['belong_to'])
 
     @pre_dump
     def decompose(self, obj):
-        address1, address2, detail = obj.address.split('/')
-        obj.address = [address1, address2]
-        obj.address_detail = detail
+        obj.area = obj.area.split('/')
+        obj.address_detail = obj.address
         kind, scale = obj.enterprise.split('/')
         obj.enterprise_kind = kind
         obj.enterprise_scale = scale
