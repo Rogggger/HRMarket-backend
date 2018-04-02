@@ -18,8 +18,8 @@ bp_account = Blueprint('account', __name__, url_prefix='/account')
 class AccountParaSchema(Schema):
     email = fields.String(required=True)
     password_md5 = fields.String(required=True, validate=lambda x: len(x) >= 6)
-    is_admin = fields.Integer()
-    area = fields.String(5)
+    is_admin = fields.Integer(required=True)
+    area = fields.String(required=True)
 
 
 @bp_account.route('/register', methods=['POST'])
