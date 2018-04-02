@@ -19,6 +19,7 @@ class AccountParaSchema(Schema):
     email = fields.String(required=True)
     password_md5 = fields.String(required=True, validate=lambda x: len(x) >= 6)
     is_admin = fields.Integer()
+    area = fields.String(5)
 
 
 @bp_account.route('/register', methods=['POST'])
@@ -40,11 +41,11 @@ def register():
     username = data['email']
     password_md5 = data['password_md5']
     is_admin = data['is_admin']
-
+    area = data['area']
     if User.is_exist(username):
         return error_jsonify(AccountAlreadyExist, status_code=400)
 
-    new_user = User(name=username, password=password_md5, isAdmin=is_admin)
+    new_user = User(name=username, password=password_md5, isAdmin=is_admin, area=area)
     session.add(new_user)
     session.commit()
     return jsonify({})
