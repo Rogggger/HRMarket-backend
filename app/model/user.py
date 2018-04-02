@@ -8,10 +8,11 @@ from app.libs.db import db
 
 class User(db.Model, UserMixin):
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    password = Column(String(200), nullable=False)
-    isAdmin = Column(Integer, nullable=False)
+    name = Column(String(50), nullable=False)  # 姓名
+    password = Column(String(200), nullable=False)  # 密码
+    isAdmin = Column(Integer, nullable=False)  # 管理员权限
     salt = Column(String(50))
+    area = Column(String(5))  # 所属市的代码
 
     @classmethod
     def is_exist(cls, name):
