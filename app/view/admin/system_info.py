@@ -4,7 +4,7 @@ import psutil
 from flask_login import login_required
 from flask import Blueprint
 import platform
-from app.decorator.auth import province_required
+from app.decorator.auth import admin_required
 from app.libs.http import jsonify
 
 bp_admin_system = Blueprint('admin_system_info', __name__, url_prefix='/admin/system_info')
@@ -16,7 +16,7 @@ DISK_INFO = u'{}%'
 
 @bp_admin_system.route("/", methods=["GET"])
 @login_required
-@province_required
+@admin_required
 def get_sys_info():  # 返回所有当前用户可以审核的条目
     print(platform.platform())
     total_cpu = psutil.cpu_times().user + psutil.cpu_times().idle
