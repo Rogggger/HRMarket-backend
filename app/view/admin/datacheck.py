@@ -45,11 +45,15 @@ def find_data():  # 返回所有当前用户可以审核的条目
         for i in user_list:  # 循环
             if i.id == current_user.id:
                 continue
-            data_tmp = DataCollection.query.filter_by(user_id=i.id).first()  # 找到这个企业填报的信息
-            if data_tmp and data_tmp.status == 1:  # 如果是上报未审核的数据
-                tmp, errors = DataCheckParaSchema().dump(data_tmp)
-                tmp['name'] = Info.query.filter_by(user_id=i.id).first().name
-                res.append(tmp)
+            data_tmp = DataCollection.query.filter_by(user_id=i.id).all()  # 找到这个企业填报的信息
+            if data_tmp is None:
+                return jsonify([])
+
+            for j in data_tmp:
+                if j.status == 1:  # 如果是上报未审核的数据
+                    tmp, errors = DataCheckParaSchema().dump(j)
+                    tmp['name'] = Info.query.filter_by(user_id=i.id).first().name
+                    res.append(tmp)
         return jsonify(res)
     if current_user.isAdmin == 2:
         data_list = DataCollection.query.filter_by(status=2).all()
