@@ -17,14 +17,6 @@ class SummaryParaSchema(Schema):
     name = fields.String()
 
 
-class SummaryReturnParaSchema(Schema):
-    start = fields.Date()  # 开始时间
-    end = fields.Date()  # 结束时间
-    filing = fields.Integer()  # 建档期
-    check = fields.Integer()  # 调查期
-    diff = fields.Integer()  # 差值
-
-
 @bp_admin_summary.route("/", methods=["POST"])
 @login_required
 def data_summary():  # 数据汇总,只汇总给定企业名称，且通过了审核的信息
@@ -33,6 +25,8 @@ def data_summary():  # 数据汇总,只汇总给定企业名称，且通过了�
     if errors:
         return error_jsonify(10000001, errors)
     tmp_user = Info.query.filter_by(name=data['name']).first()  # 找到企业姓名对应的user_id
+    if tmp_user is None:
+        return error_jsonify(10000019)
     data_list = DataCollection.query.filter_by(user_id=tmp_user.user_id).all()  # 找到所有的填报信息
     res = []
     tmp = {}
