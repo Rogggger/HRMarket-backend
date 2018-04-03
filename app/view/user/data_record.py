@@ -9,6 +9,7 @@ from marshmallow import Schema, fields
 from app.model.data_collection import DataCollection
 from app.model.report_time import ReportTime
 from app.model.user import User
+from app.model.corporate_Info import Info
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
 from app.serializer.data import DataParaSchema
@@ -30,6 +31,10 @@ def info_record():
 
     if errors:
         return error_jsonify(10000001, errors)
+    tmp_info = Info.query.filter_by(user_id=current_user.id).first()  # 找到企业信息中是否有当前用户的信息
+    if tmp_info is None:
+        return error_jsonify(10000021)
+
     now = datetime.datetime.now()
     data['time'] = now
     admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
@@ -81,6 +86,11 @@ def info_report():
 
     if errors:
         return error_jsonify(10000001, errors)
+
+    tmp_info = Info.query.filter_by(user_id=current_user.id).first()  # 找到企业信息中是否有当前用户的信息
+    if tmp_info is None:
+        return error_jsonify(10000021)
+
     now = datetime.datetime.now()
     data['time'] = now
     admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
