@@ -1,6 +1,6 @@
 #  coding: utf-8
 
-from flask_login import login_required, current_user
+from flask_login import login_required
 
 from flask import Blueprint, request
 from marshmallow import Schema, fields
@@ -8,8 +8,7 @@ from app.libs.http import jsonify, error_jsonify
 from app.model.data_collection import DataCollection
 from app.model.corporate_Info import Info
 from app.model.report_time import ReportTime
-from app.model.user import User
-from app.libs.db import session
+
 
 # 趋势信息获取，得到所有给定企业名称的趋势
 
