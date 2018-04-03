@@ -1,7 +1,7 @@
 #  coding: utf-8
 
 from flask_login import login_required, current_user
-
+from sqlalchemy import and_
 from flask import Blueprint, request
 from marshmallow import Schema, fields
 from app.libs.http import jsonify, error_jsonify
@@ -45,14 +45,11 @@ def find_data():  # 返回所有当前用户可以审核的条目
         for i in user_list:  # 循环
             if i.id == current_user.id:
                 continue
-            data_tmp = DataCollection.query.filter_by(user_id=i.id).all()  # 找到这个企业填报的信息
-            if data_tmp is None:
-                return jsonify([])
-
-            for j in data_tmp:
-                if j.status == 1:  # 如果是上报未审核的数据
+            data_tmp = DataCollection.query.filter(
+                and_(DataCollection.user_id == i.id, DataCollection.status == 1)).all()  # 找到这个企业填报的信息
+            if len(data_tmp) != 0:
+                for j in data_tmp:
                     tmp, errors = DataCheckParaSchema().dump(j)
-                    tmp['name'] = Info.query.filter_by(user_id=i.id).first().name
                     res.append(tmp)
         return jsonify(res)
     if current_user.isAdmin == 2:
@@ -90,3 +87,4 @@ def pass_or_not():  # 审核是否通过
         return error_jsonify(10000003)
     data_need.update(data_update)
     session.commit()
+    return jsonify({})
