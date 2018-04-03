@@ -103,6 +103,10 @@ def data_modify(pk):
     if data_c is None:
         error_jsonify(10000018)
 
+    data['time'] = data_c.time
+    data['time_id'] = data_c.time_id
+    data['status'] = data_c.status
+    data['user_id'] = data_c.user_id
     data_c.status = 5
     session.add(data_c)
     new_data = DataCollection(**data)
