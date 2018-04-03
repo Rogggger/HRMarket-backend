@@ -30,6 +30,7 @@ class DataCheckParaSchema(Schema):
 class PassParaSchema(Schema):
     id = fields.Integer()
     status = fields.Integer()
+    remark = fields.String()
 
 
 @bp_admin_data_check.route("/", methods=["GET"])

@@ -31,10 +31,10 @@ def trend_get():
         return error_jsonify(10000019)
     data_list = DataCollection.query.filter_by(user_id=tmp_user.user_id).all()  # 找到所有的填报信息
     res = []
-    tmp = {}
     for i in data_list:
         if i.status == 0 or i.status == 1 or i.status == 4:
             continue
+        tmp = {}
         time = ReportTime.query.filter_by(id=i.time_id).first()
         amount = int(float(i.check - i.filing) / i.check * 100)
         st_time = time.start_time.date().strftime("%Y-%m-%d")
