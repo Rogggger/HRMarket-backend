@@ -23,7 +23,7 @@ class DataSearchSchema(Schema):
                    'start_at', 'end_at', 'month', 'season']
     select = fields.String(required=True, validate=OneOf(select_list))
     condition = fields.String()
-    time = fields.Date()
+    time = fields.Date(missing='1980-01-01')
 
     @post_load
     def import_select(self, data):
