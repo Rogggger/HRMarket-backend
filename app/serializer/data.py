@@ -23,4 +23,4 @@ class DataParaSchema(Schema):
     third_reason_detail = fields.String(100)  # 第三原因
     status = fields.Integer()  # 状态
     id = fields.Integer(dump_only=True)
-    name = fields.Method(dump_only=True, serialize=get_info_name)
+    name = fields.Method(dump_only=True, serialize='get_info_name')
