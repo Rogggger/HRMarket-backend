@@ -50,7 +50,7 @@ def data_compare():
         tmp_1['check'] = tmp_1['check'] + i.check
     tmp_1['sum'] = len(data_list_1)
     tmp_1['diff'] = tmp_1['check'] - tmp_1['filing']
-    tmp_1['percent'] = int(float(tmp_1['diff']) / tmp_1['filing']*100)
+    tmp_1['percent'] = int(float(tmp_1['diff']) / tmp_1['filing'] * 100)
     res.append(tmp_1)
 
     tmp_2 = {'sum': 0, 'filing': 0, 'check': 0, 'diff': 0, 'percent': 0}
@@ -59,7 +59,7 @@ def data_compare():
         tmp_2['check'] = tmp_2['check'] + i.check
     tmp_2['sum'] = len(data_list_2)
     tmp_2['diff'] = tmp_2['check'] - tmp_2['filing']
-    tmp_2['percent'] = int(float(tmp_2['diff']) / tmp_2['filing']*100)
+    tmp_2['percent'] = int(float(tmp_2['diff']) / tmp_2['filing'] * 100)
     res.append(tmp_2)
 
     return jsonify(res)
