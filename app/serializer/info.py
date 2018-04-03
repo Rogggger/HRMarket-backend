@@ -33,3 +33,7 @@ class InfoParaSchema(Schema):
         obj.enterprise_kind = kind
         obj.enterprise_scale = scale
         obj.belong_to = obj.belong_to.split('/')
+
+
+class InfoSearchSchema(Schema):
+    area = fields.String(required=True)
