@@ -1,11 +1,8 @@
 #  coding: utf-8
 
 from flask_login import login_required
-from flask import Blueprint, request
-from marshmallow import Schema, fields
-from app.libs.http import jsonify, error_jsonify
-from app.model.data_collection import DataCollection
-from app.model.report_time import ReportTime
+from flask import Blueprint
+from app.libs.http import jsonify
 from app.model.user import User
 
 bp_admin_sample = Blueprint('admin_sample', __name__, url_prefix='/admin/sample')
