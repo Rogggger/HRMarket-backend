@@ -115,3 +115,4 @@ def data_modify(pk):
     new_data = DataCollection(**data)
     session.add(new_data)
     session.commit()
+    return jsonify({})
