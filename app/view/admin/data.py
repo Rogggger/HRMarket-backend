@@ -90,7 +90,7 @@ def data_search():
     return jsonify(json)
 
 
-@bp_admin_data.route('/<int:pk>/', methods=["POST"])
+@bp_admin_data.route('/<int:pk>', methods=["POST"])
 @login_required
 @admin_required
 def data_modify(pk):
