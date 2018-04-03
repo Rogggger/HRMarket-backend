@@ -19,4 +19,5 @@ class AccountParaSchema(Schema):
     def import_user(self, data):
         data['name'] = data.pop('email')
         data['password'] = data.pop('password_md5')
-        data['isAdmin'] = data.pop('is_admin')
+        if 'isAdmin' in data:
+            data['isAdmin'] = data.pop('is_admin')
