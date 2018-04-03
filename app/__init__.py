@@ -11,6 +11,8 @@ from app.view.admin.time_manage import bp_admin_time
 from app.view.admin.summary import bp_admin_summary
 from app.view.admin.datacheck import bp_admin_data_check
 from app.view.admin.trend import bp_admin_trend
+from app.view.admin.info import bp_admin_info
+from app.view.admin.system_info import bp_admin_system
 
 
 def create_app(object_name):
@@ -27,6 +29,8 @@ def create_app(object_name):
     app.register_blueprint(bp_admin_summary)
     app.register_blueprint(bp_admin_data_check)
     app.register_blueprint(bp_admin_trend)
+    app.register_blueprint(bp_admin_system)
+    app.register_blueprint(bp_admin_info)
 
     login_manager.init_app(app)
     db.init_app(app)
