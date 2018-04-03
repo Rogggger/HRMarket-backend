@@ -1,6 +1,6 @@
 ### 企业上报数据汇总：
 
-### admin/summary POST
+### admin/summary/ POST
 传入
 - name 企业名字
 

@@ -1,5 +1,5 @@
 ### 对比分析
-### admin/compare GET
+### admin/compare/ GET
 得到调查期
 传出
 ```
@@ -17,7 +17,7 @@
 	]
 }
 ```
-###admin/compare POST
+###admin/compare/ POST
 传入 两个调查期的id
 ```
 {
