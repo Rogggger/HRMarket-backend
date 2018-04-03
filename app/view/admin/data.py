@@ -44,6 +44,9 @@ class DataSearchSchema(Schema):
             data['class'] = DataCollection
         elif select in info_list:
             data['class'] = Info
+            if select == 'enterprise_kind':
+                data['select'] = 'enterprise'
+                data['condition'] = u'{}%'.format(data['condition'])
         return data
 
 
@@ -71,7 +74,17 @@ def data_search():
     elif select == 'status':
         q = q.filter_by(status=int(condition))
     else:
-        q = q.join(klass, getattr(klass, select) == condition)
+        if klass == User:
+            co = User.id == DataCollection.user_id
+        elif klass == Info:
+            co = Info.user_id == DataCollection.user_id
+        else:
+            raise ValueError('GG')
+        q = q.join(klass, co)
+        if select == 'enterprise':
+            q = q.filter(getattr(klass, select).like(condition))
+        else:
+            q = q.filter(getattr(klass, select) == condition)
     data_list = q.all()
     json = DataParaSchema(many=True).dump(data_list).data
     return jsonify(json)
