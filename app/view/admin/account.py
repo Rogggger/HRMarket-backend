@@ -26,7 +26,7 @@ def get():
 @province_required
 def modify(pk):
     json = request.json
-    data, error = AccountParaSchema(exclude=('is_admin', 'id')).load(json)
+    data, error = AccountParaSchema(exclude=('is_admin', 'id', 'area')).load(json)
     if error:
         return error_jsonify(10000001, error)
 

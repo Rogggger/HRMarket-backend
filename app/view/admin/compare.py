@@ -3,10 +3,10 @@
 from flask_login import login_required
 from flask import Blueprint, request
 from marshmallow import Schema, fields
+from sqlalchemy import or_
 from app.libs.http import jsonify, error_jsonify
 from app.model.data_collection import DataCollection
 from app.model.report_time import ReportTime
-
 
 bp_admin_compare = Blueprint('admin_compare', __name__, url_prefix='/admin/compare')
 
@@ -28,7 +28,7 @@ def data_compare_get():
     return jsonify(res)
 
 
-@bp_admin_compare.route("/", methods=["POSt"])  # 得到调查期
+@bp_admin_compare.route("/", methods=["POST"])  # 得到调查期
 @login_required
 def data_compare():
     json = request.get_json()
@@ -36,13 +36,12 @@ def data_compare():
 
     if errors:
         return error_jsonify(10000001, errors)
-    data_list_1 = DataCollection.query.filter(
-        DataCollection.time_id == data['id_1'] and (DataCollection.status == 2 or DataCollection.status == 3)).all()
-    data_list_2 = DataCollection.query.filter(
-        DataCollection.time_id == data['id_2'] and (DataCollection.status == 2 or DataCollection.status == 3)).all()
-
+    data_list_1 = DataCollection.query.filter(or_(DataCollection.status == 2, DataCollection.status == 3),
+                                              DataCollection.time_id == data['id_1']).all()
+    data_list_2 = DataCollection.query.filter(or_(DataCollection.status == 2, DataCollection.status == 3),
+                                              DataCollection.time_id == data['id_2']).all()
     res = []
-    if data_list_1 is None or data_list_2 is None:
+    if not data_list_1 or not data_list_2:
         return error_jsonify(10000020)
     tmp_1 = {'sum': 0, 'filing': 0, 'check': 0, 'diff': 0, 'percent': 0}
     for i in data_list_1:
