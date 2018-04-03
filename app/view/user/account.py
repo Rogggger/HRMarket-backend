@@ -42,7 +42,7 @@ def register():
     password_md5 = data['password_md5']
     is_admin = data['is_admin']
     area = data['area']
-    if User.is_exist(username):
+    if User.is_exist(username, area):
         return error_jsonify(AccountAlreadyExist, status_code=400)
 
     new_user = User(name=username, password=password_md5, isAdmin=is_admin, area=area)
