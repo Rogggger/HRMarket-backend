@@ -9,9 +9,9 @@ from app.libs.http import jsonify
 
 bp_admin_system = Blueprint('admin_system_info', __name__, url_prefix='/admin/system_info')
 
-CPU_INFO = u'{}%'
-RAM_INFO = u'{}%'
-DISK_INFO = u'{}%'
+CPU_INFO = u'{}'
+RAM_INFO = u'{}'
+DISK_INFO = u'{}'
 
 
 @bp_admin_system.route("/", methods=["GET"])
