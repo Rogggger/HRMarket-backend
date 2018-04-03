@@ -1,6 +1,6 @@
 #  coding: utf-8
 
-from flask_login import login_required, current_user
+from flask_login import login_required
 from flask import Blueprint, request
 from app.libs.db import session
 from app.serializer.account import AccountParaSchema
