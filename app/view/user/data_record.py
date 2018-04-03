@@ -72,7 +72,7 @@ def info_record_get():
         tmp_data = DataCollection.query.filter_by(user_id=current_user.id, time_id=report_time.id).first()
         # 找到企业填报的符合条件的数据
         if tmp_data:
-            data_need, errors = DataParaSchema(exclude=('id',)).dump(tmp_data)
+            data_need, errors = DataParaSchema(exclude=('id', 'name')).dump(tmp_data)
             return jsonify(data_need)
     else:
         return jsonify({})
@@ -124,7 +124,7 @@ def info_get():
     res = DataCollection.query.filter(
         and_(DataCollection.user_id == current_user.id, DataCollection.time >= data['start'],
              DataCollection.time <= data['end'])).all()
-    data_need, errors = DataParaSchema(many=True, exclude=('id',)).dump(res)
+    data_need, errors = DataParaSchema(many=True, exclude=('id', 'name')).dump(res)
     if errors:
         return error_jsonify(10000001)
     return jsonify(data_need)

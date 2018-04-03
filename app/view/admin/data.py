@@ -87,6 +87,7 @@ def data_search():
             q = q.filter(getattr(klass, select) == condition)
     data_list = q.all()
     json = DataParaSchema(many=True).dump(data_list).data
+
     return jsonify(json)
 
 
@@ -95,13 +96,15 @@ def data_search():
 @admin_required
 def data_modify(pk):
     json = request.get_json()
-    data, error = DataParaSchema(exclude=('id',)).load(json)
+    data, error = DataParaSchema().load(json)
     if error:
         return error_jsonify(10000001, error)
 
     data_c = DataCollection.query.filter_by(id=pk).first()
     if data_c is None:
-        error_jsonify(10000018)
+        return error_jsonify(10000018)
+    if data_c.status == 5:
+        return error_jsonify(10000022)
 
     data['time'] = data_c.time
     data['time_id'] = data_c.time_id
