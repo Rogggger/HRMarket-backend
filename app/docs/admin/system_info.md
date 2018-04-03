@@ -1,6 +1,6 @@
 ### 查看系统信息：
 
-### /admin/system_info  GET
+### /admin/system_info/  GET
 传入
 
 无
