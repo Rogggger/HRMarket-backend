@@ -2,7 +2,7 @@
 
 from flask_login import login_required
 from flask import Blueprint
-from app.libs.http import jsonify
+import app.libs.http
 from app.model.user import User
 
 bp_admin_sample = Blueprint('admin_sample', __name__, url_prefix='/admin/sample')
@@ -24,4 +24,4 @@ def sample_get():  # 返回每个地区的企业总数以及占比
     for i in area_list:
         tmp = {'area': i, 'sum': sum[i]}
         res.append(tmp)
-    return jsonify(res)
+    return app.libs.http.jsonify(res)
