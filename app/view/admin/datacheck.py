@@ -90,3 +90,4 @@ def pass_or_not():  # 审核是否通过
         return error_jsonify(10000003)
     data_need.update(data_update)
     session.commit()
+    return jsonify({})
