@@ -16,6 +16,7 @@ from app.view.admin.sample import bp_admin_sample
 from app.view.admin.info import bp_admin_info
 from app.view.admin.system_info import bp_admin_system
 from app.view.admin.account import bp_admin_user
+from app.view.admin.data import bp_admin_data
 
 
 def create_app(object_name):
@@ -37,6 +38,7 @@ def create_app(object_name):
     app.register_blueprint(bp_admin_compare)
     app.register_blueprint(bp_admin_sample)
     app.register_blueprint(bp_admin_user)
+    app.register_blueprint(bp_admin_data)
 
     login_manager.init_app(app)
     db.init_app(app)
