@@ -11,6 +11,7 @@ from app.consts import (
     AccountAlreadyExist, AccountDoesNotExist,
     PasswordIsNotCorrect
 )
+from app.consts.user import PERMISSION_CITY
 
 bp_account = Blueprint('account', __name__, url_prefix='/account')
 
@@ -37,6 +38,9 @@ def register():
     area = data['area']
     if User.is_exist(username, area):
         return error_jsonify(AccountAlreadyExist, status_code=400)
+    if is_admin == PERMISSION_CITY:
+        if User.query.filter_by(isAdmin=PERMISSION_CITY, area=area).count():
+            return error_jsonify(AccountAlreadyExist)
 
     new_user = User(name=username, password=password_md5, isAdmin=is_admin, area=area)
     session.add(new_user)
