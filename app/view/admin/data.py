@@ -2,7 +2,7 @@
 from datetime import timedelta
 from flask_login import login_required
 from flask import request, Blueprint
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, pre_load
 from marshmallow.validate import OneOf
 from app.model.user import User
 from app.model.data_collection import DataCollection
@@ -25,6 +25,12 @@ class DataSearchSchema(Schema):
     condition = fields.String()
     time = fields.Date(missing='1980-01-01')
 
+    @pre_load
+    def pre_select(self, json):
+        if not json['time']:
+            json.pop('time')
+        return json
+
     @post_load
     def import_select(self, data):
         user_list = ['user_name', 'user_is_admin']
@@ -38,6 +44,7 @@ class DataSearchSchema(Schema):
             data['class'] = DataCollection
         elif select in info_list:
             data['class'] = Info
+        return data
 
 
 @bp_admin_data.route("/", methods=["POST"])
