@@ -94,7 +94,8 @@ def data_search():
 @login_required
 @admin_required
 def data_modify(pk):
-    data, error = DataParaSchema(exclude=('id',)).loads(request.json)
+    json = request.get_json()
+    data, error = DataParaSchema(exclude=('id',)).load(json)
     if error:
         return error_jsonify(10000001, error)
 
