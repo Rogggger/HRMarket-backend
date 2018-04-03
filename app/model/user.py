@@ -16,8 +16,8 @@ class User(db.Model, UserMixin):
     area = Column(String(5))  # 所属市的代码
 
     @classmethod
-    def is_exist(cls, name):
-        res = cls.query.filter_by(name=name).all()
+    def is_exist(cls, name, area):
+        res = cls.query.filter_by(name=name, area=area).all()
         if res:
             return True
         return False
