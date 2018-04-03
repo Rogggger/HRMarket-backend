@@ -1,5 +1,6 @@
 #  coding: utf-8
 import os
+import psutil
 from flask_login import login_required
 from flask import Blueprint
 import platform
@@ -8,26 +9,27 @@ from app.libs.http import jsonify
 
 bp_admin_system = Blueprint('admin_system_info', __name__, url_prefix='/admin/system_info')
 
-RAM_INFO = 'RAM Total = {} MB\nRAM Used = {} MB\nRAM Free = {} MB\n'
-DISK_INFO = 'DISK Total Space = {} B\nDISK Used Space = {} B\nDISK Used Percentage = {}\n'
+CPU_INFO = u'{}%'
+RAM_INFO = u'{}%'
+DISK_INFO = u'{}%'
 
 
 @bp_admin_system.route("/", methods=["GET"])
 @login_required
 @province_required
 def get_sys_info():  # 返回所有当前用户可以审核的条目
-    cpu_usage = get_cpu_use()
-    ram_stats = get_ram_info()
-    ram_total = round(int(ram_stats[0]) / 1000, 1)
-    ram_used = round(int(ram_stats[1]) / 1000, 1)
-    ram_free = round(int(ram_stats[2]) / 1000, 1)
-    disk_stats = get_disk_space()
-    disk_total = disk_stats[0]
-    disk_used = disk_stats[1]
-    disk_perc = disk_stats[3]
+    print(platform.platform())
+    total_cpu = psutil.cpu_times().user + psutil.cpu_times().idle
+    user_cpu = psutil.cpu_times().user
+    cpu_syl = user_cpu / total_cpu * 100
+    mem = psutil.virtual_memory()
+    mem_total = mem.total
+    mem_used = mem.used
+    mem_syl = mem_used / float(mem_total) * 100
+    dis_syl = psutil.disk_usage('/').used / float(psutil.disk_usage('/').total) * 100
 
-    data = {'cpu': 'CPU Use = ' + cpu_usage, 'memory': RAM_INFO.format(ram_total, ram_used, ram_free),
-            'hard_disk': DISK_INFO.format(disk_total, disk_used, disk_perc), 'system': platform.platform()}
+    data = {'cpu': CPU_INFO.format(cpu_syl), 'memory': RAM_INFO.format(mem_syl),
+            'hard_disk': DISK_INFO.format(dis_syl), 'system': platform.platform()}
 
     return jsonify(data)
 
