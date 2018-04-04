@@ -2,7 +2,7 @@
 from datetime import timedelta
 from flask_login import login_required
 from flask import request, Blueprint
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, pre_load
 from marshmallow.validate import OneOf
 from app.model.user import User
 from app.model.data_collection import DataCollection
@@ -23,7 +23,13 @@ class DataSearchSchema(Schema):
                    'start_at', 'end_at', 'month', 'season']
     select = fields.String(required=True, validate=OneOf(select_list))
     condition = fields.String()
-    time = fields.Date()
+    time = fields.Date(missing='1980-01-01')
+
+    @pre_load
+    def pre_select(self, json):
+        if not json['time']:
+            json.pop('time')
+        return json
 
     @post_load
     def import_select(self, data):
@@ -38,6 +44,10 @@ class DataSearchSchema(Schema):
             data['class'] = DataCollection
         elif select in info_list:
             data['class'] = Info
+            if select == 'enterprise_kind':
+                data['select'] = 'enterprise'
+                data['condition'] = u'{}%'.format(data['condition'])
+        return data
 
 
 @bp_admin_data.route("/", methods=["POST"])
@@ -64,26 +74,45 @@ def data_search():
     elif select == 'status':
         q = q.filter_by(status=int(condition))
     else:
-        q = q.join(klass, getattr(klass, select) == condition)
+        if klass == User:
+            co = User.id == DataCollection.user_id
+        elif klass == Info:
+            co = Info.user_id == DataCollection.user_id
+        else:
+            raise ValueError('GG')
+        q = q.join(klass, co)
+        if select == 'enterprise':
+            q = q.filter(getattr(klass, select).like(condition))
+        else:
+            q = q.filter(getattr(klass, select) == condition)
     data_list = q.all()
     json = DataParaSchema(many=True).dump(data_list).data
+
     return jsonify(json)
 
 
-@bp_admin_data.route('/<int:pk>/', methods=["POST"])
+@bp_admin_data.route('/<int:pk>', methods=["POST"])
 @login_required
 @admin_required
 def data_modify(pk):
-    data, error = DataParaSchema(exclude=('id',)).loads(request.json)
+    json = request.get_json()
+    data, error = DataParaSchema().load(json)
     if error:
         return error_jsonify(10000001, error)
 
     data_c = DataCollection.query.filter_by(id=pk).first()
     if data_c is None:
-        error_jsonify(10000018)
+        return error_jsonify(10000018)
+    if data_c.status == 5:
+        return error_jsonify(10000022)
 
+    data['time'] = data_c.time
+    data['time_id'] = data_c.time_id
+    data['status'] = data_c.status
+    data['user_id'] = data_c.user_id
     data_c.status = 5
     session.add(data_c)
     new_data = DataCollection(**data)
     session.add(new_data)
     session.commit()
+    return jsonify({})

@@ -9,6 +9,7 @@ from marshmallow import Schema, fields
 from app.model.data_collection import DataCollection
 from app.model.report_time import ReportTime
 from app.model.user import User
+from app.model.corporate_Info import Info
 from app.libs.http import jsonify, error_jsonify
 from app.libs.db import session
 from app.serializer.data import DataParaSchema
@@ -30,6 +31,10 @@ def info_record():
 
     if errors:
         return error_jsonify(10000001, errors)
+    tmp_info = Info.query.filter_by(user_id=current_user.id).first()  # 找到企业信息中是否有当前用户的信息
+    if tmp_info is None:
+        return error_jsonify(10000021)
+
     now = datetime.datetime.now()
     data['time'] = now
     admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
@@ -67,7 +72,7 @@ def info_record_get():
         tmp_data = DataCollection.query.filter_by(user_id=current_user.id, time_id=report_time.id).first()
         # 找到企业填报的符合条件的数据
         if tmp_data:
-            data_need, errors = DataParaSchema(exclude=('id',)).dump(tmp_data)
+            data_need, errors = DataParaSchema(exclude=('id', 'name')).dump(tmp_data)
             return jsonify(data_need)
     else:
         return jsonify({})
@@ -81,6 +86,11 @@ def info_report():
 
     if errors:
         return error_jsonify(10000001, errors)
+
+    tmp_info = Info.query.filter_by(user_id=current_user.id).first()  # 找到企业信息中是否有当前用户的信息
+    if tmp_info is None:
+        return error_jsonify(10000021)
+
     now = datetime.datetime.now()
     data['time'] = now
     admin_user = User.query.filter_by(isAdmin=2).first()  # 找到省管理员账户id
@@ -114,7 +124,7 @@ def info_get():
     res = DataCollection.query.filter(
         and_(DataCollection.user_id == current_user.id, DataCollection.time >= data['start'],
              DataCollection.time <= data['end'])).all()
-    data_need, errors = DataParaSchema(many=True, exclude=('id',)).dump(res)
+    data_need, errors = DataParaSchema(many=True, exclude=('id', 'name')).dump(res)
     if errors:
         return error_jsonify(10000001)
     return jsonify(data_need)
